@@ -1,5 +1,8 @@
+mod gui;
 
+use iced::{Sandbox, Settings};
+use gui::Calculator;
 
-fn main() {
-    println!("Your mom!.");
+fn main() -> iced::Result {
+    Calculator::run(Settings::default())
 }
