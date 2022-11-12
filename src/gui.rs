@@ -1,12 +1,13 @@
 use iced::{
-    Sandbox
+    Sandbox, Alignment, Theme
 };
+
 use iced::widget::{
-    button, column, text, Column
+    button, column, text, row
 };
 
 #[derive(Debug, Clone, Copy)]
-pub enum ButtonPressed {
+pub enum Pressed {
     Plus,
     Minus,
 }
@@ -17,7 +18,7 @@ pub struct Calculator {
 }
 
 impl Sandbox for Calculator {
-    type Message = ButtonPressed;
+    type Message = Pressed;
 
     fn new() -> Self {
         Self::default()
@@ -29,14 +30,23 @@ impl Sandbox for Calculator {
 
     fn update(&mut self, message: Self::Message) {
         match message {
-            ButtonPressed::Plus => self.value += 1.0,
-            ButtonPressed::Minus => self.value -= 1.0,
+            Pressed::Plus => self.value += 1.0,
+            Pressed::Minus => self.value -= 1.0,
         }
     }
 
     fn view(&self) -> iced::Element<'_, Self::Message> {
         column![
-            button("+").on_press(ButtonPressed::Plus),
+            row![text(self.value)].align_items(Alignment::Center),
+            row![button("+").on_press(Pressed::Plus)].align_items(Alignment::Center),
+            row![button("-").on_press(Pressed::Minus)].align_items(Alignment::Center),
         ]
+            .padding(20)
+            .align_items(Alignment::Fill)
+            .into()
+    }
+
+    fn theme(&self) -> Theme {
+        Theme::Dark
     }
 }
