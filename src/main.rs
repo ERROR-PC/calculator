@@ -1,4 +1,5 @@
 mod gui;
+mod button_enums;
 
 use iced::{Sandbox, Settings, window};
 use gui::Calculator;
