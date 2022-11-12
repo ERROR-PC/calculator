@@ -3,7 +3,7 @@ use iced::{
 };
 
 use iced::widget::{
-    button, column, text
+    button, column, text, row
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -37,9 +37,9 @@ impl Sandbox for Calculator {
 
     fn view(&self) -> iced::Element<'_, Self::Message> {
         column![
-            button("+").on_press(Pressed::Plus),
-            text(self.value),
-            button("-").on_press(Pressed::Minus),
+            row![text(self.value)].align_items(Alignment::Center),
+            row![button("+").on_press(Pressed::Plus)].align_items(Alignment::Center),
+            row![button("-").on_press(Pressed::Minus)].align_items(Alignment::Center),
         ]
             .padding(20)
             .align_items(Alignment::Fill)
@@ -50,4 +50,3 @@ impl Sandbox for Calculator {
         Theme::Dark
     }
 }
-
