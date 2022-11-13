@@ -1,14 +1,13 @@
 use num_complex::Complex64;
 
-use iced::{
-    Sandbox, Alignment, Theme
-};
+use iced::{Sandbox, Theme, Length};
+use iced::alignment::{Alignment, Horizontal, Vertical};
 
 use iced::widget::{
-    button, column, text, row, container
+    Column, Row, Container, Button, Text
 };
 
-use crate::button_enums::{Operator, MathFn};
+use crate::button_enums::{MathFn, Operator};
 
 #[derive(Debug, Clone, Copy)]
 pub enum Pressed {
@@ -20,7 +19,16 @@ pub enum Pressed {
 
 #[derive(Debug, Clone, Default)]
 pub struct Calculator {
-    text: String
+    text: String,
+}
+
+macro_rules! num_btn {
+    ($num: literal) => {
+        iced::widget::Button::new(stringify!($num))
+            .on_press(Pressed::Num($num))
+            .width(iced::Length::Fill)
+            .height(iced::Length::Fill)
+    };
 }
 
 impl Sandbox for Calculator {
@@ -38,38 +46,105 @@ impl Sandbox for Calculator {
         match message {
             // 48 is the begining of digits in ascii
             Pressed::Num(num) => self.text.push((num + 48) as char),
-            _ => {},
+            _ => {}
         }
     }
 
     fn view(&self) -> iced::Element<'_, Self::Message> {
-        const PAD: u16 = 5;
-        const SPACE: u16 = 10;
-        column![
-            container(text(&self.text)).height(30.into()),
-            row![
-                button("1").on_press(Pressed::Num(1)),
-                button("2").on_press(Pressed::Num(2)),
-                button("3").on_press(Pressed::Num(3)),
-            ].padding(PAD).spacing(SPACE),
-            row![
-                button("4").on_press(Pressed::Num(4)),
-                button("5").on_press(Pressed::Num(5)),
-                button("6").on_press(Pressed::Num(6)),
-            ].padding(PAD).spacing(SPACE),
-            row![
-                button("7").on_press(Pressed::Num(7)),
-                button("8").on_press(Pressed::Num(8)),
-                button("9").on_press(Pressed::Num(9)),
-            ].padding(PAD).spacing(SPACE),
-            row![
-                button("0").on_press(Pressed::Num(0)),
-                button("=").on_press(Pressed::Op(Operator::Equal)),
-            ].padding(PAD).spacing(SPACE),
-        ]
+        const PAD: u16 = 10;
+        let display = Text::new(&self.text)
+            .height(Length::Fill)
+            .width(Length::Fill)
+            .horizontal_alignment(Horizontal::Left)
+            .vertical_alignment(Vertical::Top);
+
+        let button_plus = Button::new("+")
+            .on_press(Pressed::Op(Operator::Plus))
+            .width(Length::Fill)
+            .height(Length::Fill);
+        let button_minus = Button::new("-")
+            .on_press(Pressed::Op(Operator::Minus))
+            .width(Length::Fill)
+            .height(Length::Fill);
+        let button_mul = Button::new("×")
+            .on_press(Pressed::Op(Operator::Mul))
+            .width(Length::Fill)
+            .height(Length::Fill);
+        let button_divide = Button::new("÷")
+            .on_press(Pressed::Op(Operator::Divide))
+            .width(Length::Fill)
+            .height(Length::Fill);
+
+        let button_eq = Button::new("=")
+            .on_press(Pressed::Op(Operator::Equal))
+            .width(Length::Fill)
+            .height(Length::Fill);
+
+        let row1 = Row::new()
+            .push(num_btn!(1))
             .spacing(PAD)
-            .padding(PAD)
-            .align_items(Alignment::Center)
+            .push(num_btn!(2))
+            .spacing(PAD)
+            .push(num_btn!(3))
+            .spacing(PAD)
+            .push(button_plus)
+            .width(Length::Fill)
+            .height(Length::Fill);
+
+        let row2 = Row::new()
+            .push(num_btn!(4))
+            .spacing(PAD)
+            .push(num_btn!(5))
+            .spacing(PAD)
+            .push(num_btn!(6))
+            .spacing(PAD)
+            .push(button_minus)
+            .width(Length::Fill)
+            .height(Length::Fill);
+
+        let row3 = Row::new()
+            .push(num_btn!(7))
+            .spacing(PAD)
+            .push(num_btn!(8))
+            .spacing(PAD)
+            .push(num_btn!(9))
+            .spacing(PAD)
+            .push(button_mul)
+            .width(Length::Fill)
+            .height(Length::Fill);
+
+        let row4 = Row::new()
+            .push(num_btn!(0).width(Length::FillPortion(2)))
+            .spacing(PAD)
+            .push(button_eq)
+            .spacing(PAD)
+            .push(button_divide)
+            .width(Length::Fill)
+            .height(Length::Fill);
+
+        let non_disp_col = Column::new()
+            .push(row1)
+            .spacing(PAD)
+            .push(row2)
+            .spacing(PAD)
+            .push(row3)
+            .spacing(PAD)
+            .push(row4)
+            .width(Length::Fill)
+            .height(Length::FillPortion(2));
+        let all_column = Column::new()
+            .push(display)
+            .spacing(PAD)
+            .push(non_disp_col)
+            .width(Length::Fill)
+            .height(Length::Fill);
+
+        Container::new(all_column)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .center_x()
+            .center_y()
+            .padding(10)
             .into()
     }
 
