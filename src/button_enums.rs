@@ -1,4 +1,6 @@
 #[derive(Debug, Clone, Copy)]
+
+#[allow(dead_code)]
 pub enum Operator{
     Plus,
     Minus,
@@ -8,6 +10,7 @@ pub enum Operator{
 }
 
 #[derive(Debug, Clone, Copy)]
+#[allow(dead_code)]
 pub enum MathFn {
     Sin,
     Cos,
