@@ -1,6 +1,6 @@
 use num_complex::Complex64;
 
-use iced::{Sandbox, Theme, Length};
+use iced::{Theme, Length, Application, Command};
 use iced::alignment::{Horizontal, Vertical};
 
 use iced::widget::{
@@ -10,13 +10,14 @@ use iced::widget::{
 use crate::button_enums::{MathFn, Operator};
 use crate::button_funcs::{num_container, basic_ops};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 #[allow(dead_code)]
 pub enum Pressed {
     Num(u8),
     Op(Operator),
     Const(Complex64),
     Func(MathFn),
+    Keyboard(iced::keyboard::Event),
 }
 
 #[derive(Debug, Clone, Default)]
@@ -31,36 +32,57 @@ impl Calculator {
     }
 }
 
-impl Sandbox for Calculator {
+impl Application for Calculator {
+    type Executor = iced::executor::Default;
     type Message = Pressed;
+    type Theme = Theme;
+    type Flags = ();
 
-    fn new() -> Self {
-        Self::default()
+    fn new(_flags: Self::Flags) -> (Self, iced::Command<Self::Message>) {
+        (Self::default(), Command::none())
     }
 
     fn title(&self) -> String {
         String::from("The le epic calculator")
     }
 
-    fn update(&mut self, message: Self::Message) {
+    fn update(&mut self, message: Self::Message) -> Command<Pressed> {
+        const ASCII_OF_0: u8 = 48;
         match message {
-            // 48 is the begining of digits in ascii
             Pressed::Num(num) => {
                 if self.is_num_start() && num == 0 {
-                    return;
+                    return Command::none();
                 }
-                self.text.push((num + 48) as char)
+                self.text.push((num + ASCII_OF_0) as char)
             },
             Pressed::Op(op) => {
                 if self.is_num_start() {
-                    return;
+                    return Command::none();
                 }
                 self.text.push(op.into());
             },
-            _ => {
+            Pressed::Keyboard(event) => {
+                use iced::keyboard::Event;
 
+                match event {
+                    Event::CharacterReceived(ch) => {
+                        if ch.is_numeric() {
+                            self.update(Pressed::Num(ch as u8 - ASCII_OF_0));
+                        }
+                        else if let Ok(operator) = ch.try_into() {
+                            self.update(Pressed::Op(operator));
+                        }
+                    },
+                    Event::ModifiersChanged(_modifier) => {}, // idk if I will use this
+                    _ => {},
+                }
+            },
+            _ => {
+                todo!()
             },
         }
+
+        Command::none()
     }
 
     fn view(&self) -> iced::Element<'_, Self::Message> {
@@ -94,5 +116,17 @@ impl Sandbox for Calculator {
 
     fn theme(&self) -> Theme {
         Theme::Dark
+    }
+
+    fn subscription(&self) -> iced::Subscription<Self::Message> {
+        use iced::keyboard::Event::CharacterReceived;
+        use iced::subscription::events_with;
+
+        events_with(|event, _status|
+            if let iced::Event::Keyboard(CharacterReceived(ch)) = event {
+                Some(Pressed::Keyboard(CharacterReceived(ch)))
+            }
+            else { None }
+        )
     }
 }

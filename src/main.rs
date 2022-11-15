@@ -1,8 +1,9 @@
 mod gui;
 mod button_enums;
 mod button_funcs;
+mod errors;
 
-use iced::{Sandbox, Settings, window};
+use iced::{Application, Settings, window};
 use gui::Calculator;
 
 fn main() -> iced::Result {

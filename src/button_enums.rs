@@ -24,6 +24,21 @@ impl convert::From<Operator> for char {
     }
 }
 
+impl convert::TryFrom<char> for Operator {
+    type Error = crate::errors::OperatorParseError;
+
+    fn try_from(ch: char) -> Result<Self, Self::Error> {
+        match ch.to_ascii_lowercase() {
+            '+' => Ok(Operator::Plus),
+            '-' => Ok(Operator::Minus),
+            '*' | 'x' | '×' | '⋅' => Ok(Operator::Mul),
+            '/' | '÷' => Ok(Operator::Divide),
+            '=' => Ok(Operator::Equal),
+            _ => Err(Self::Error { ch }),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 #[allow(dead_code)]
 pub enum MathFn {
