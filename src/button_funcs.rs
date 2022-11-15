@@ -34,7 +34,7 @@ pub fn num_container<'a>() -> Container<'a, Pressed> {
 
     let btn_eq = button("=")
         .on_press(Pressed::Op(Operator::Equal))
-        .width(Length::Fill)
+        .width(Length::FillPortion(1))
         .height(Length::Fill);
     let row4 = row![
         num_btn!(0).width(Length::FillPortion(2)),
@@ -53,7 +53,7 @@ pub fn num_container<'a>() -> Container<'a, Pressed> {
         .center_x()
         .center_y()
         .height(Length::Fill)
-        .width(Length::FillPortion(3))
+        .width(Length::FillPortion(3)) // 3 columns
 }
 
 pub fn basic_ops<'a>() -> Column<'a, Pressed> {

@@ -24,6 +24,12 @@ pub struct Calculator {
     text: String,
 }
 
+impl Calculator {
+    pub fn is_num_start(&self) -> bool {
+        !self.text.chars().last().unwrap_or('+').is_numeric()
+    }
+}
+
 impl Sandbox for Calculator {
     type Message = Pressed;
 
@@ -39,9 +45,20 @@ impl Sandbox for Calculator {
         match message {
             // 48 is the begining of digits in ascii
             Pressed::Num(num) => {
+                if self.is_num_start() && num == 0 {
+                    return;
+                }
                 self.text.push((num + 48) as char)
             },
-            _ => {}
+            Pressed::Op(op) => {
+                if self.is_num_start() {
+                    return;
+                }
+                self.text.push(op.into());
+            },
+            _ => {
+
+            },
         }
     }
 
