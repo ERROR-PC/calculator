@@ -70,7 +70,7 @@ impl Sandbox for Calculator {
             .height(Length::Fill)
             .center_x()
             .center_y()
-            .padding(10)
+            .padding(PAD)
             .into()
     }
 
