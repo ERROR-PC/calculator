@@ -4,7 +4,7 @@ use iced::{Sandbox, Theme, Length};
 use iced::alignment::{Horizontal, Vertical};
 
 use iced::widget::{
-    column, row, Container, Text
+    column, row, container, text
 };
 
 use crate::button_enums::{MathFn, Operator};
@@ -47,7 +47,7 @@ impl Sandbox for Calculator {
 
     fn view(&self) -> iced::Element<'_, Self::Message> {
         const PAD: u16 = 10;
-        let display = Text::new(&self.text)
+        let display = text(&self.text)
             .height(Length::Fill)
             .width(Length::Fill)
             .horizontal_alignment(Horizontal::Left)
@@ -65,7 +65,7 @@ impl Sandbox for Calculator {
             .width(Length::Fill)
             .height(Length::Fill);
 
-        Container::new(all_column)
+        container(all_column)
             .width(Length::Fill)
             .height(Length::Fill)
             .center_x()

@@ -1,7 +1,7 @@
 use iced::widget::{
-    Container, row, column, Column, Button
+    Container, container, row, column, Column, button
 };
-use iced::{Length, Renderer};
+use iced::Length;
 
 use crate::button_enums::Operator;
 use crate::gui::Pressed;
@@ -10,7 +10,7 @@ const PAD: u16 = 10;
 pub fn num_container<'a>() -> Container<'a, Pressed> {
     macro_rules! num_btn {
         ($num: literal) => {
-            iced::widget::Button::new(stringify!($num))
+            iced::widget::button(stringify!($num))
                 .on_press(crate::gui::Pressed::Num($num))
                 .width(iced::Length::Fill)
                 .height(iced::Length::Fill)
@@ -32,7 +32,7 @@ pub fn num_container<'a>() -> Container<'a, Pressed> {
         .width(Length::Fill)
         .height(Length::Fill);
 
-    let btn_eq: Button<'_, _, Renderer> = Button::new("=")
+    let btn_eq = button("=")
         .on_press(Pressed::Op(Operator::Equal))
         .width(Length::Fill)
         .height(Length::Fill);
@@ -49,7 +49,7 @@ pub fn num_container<'a>() -> Container<'a, Pressed> {
         .width(Length::Fill)
         .height(Length::Fill);
 
-    Container::new(all_cols)
+    container(all_cols)
         .center_x()
         .center_y()
         .height(Length::Fill)
@@ -57,22 +57,22 @@ pub fn num_container<'a>() -> Container<'a, Pressed> {
 }
 
 pub fn basic_ops<'a>() -> Column<'a, Pressed> {
-    let plus = Button::new("+")
+    let plus = button("+")
         .on_press(Pressed::Op(Operator::Plus))
         .height(Length::Fill)
         .width(Length::Fill);
 
-    let minus = Button::new("-")
+    let minus = button("-")
         .on_press(Pressed::Op(Operator::Minus))
         .height(Length::Fill)
         .width(Length::Fill);
 
-    let mul = Button::new("×")
+    let mul = button("×")
         .on_press(Pressed::Op(Operator::Mul))
         .height(Length::Fill)
         .width(Length::Fill);
 
-    let divide = Button::new("÷")
+    let divide = button("÷")
         .on_press(Pressed::Op(Operator::Divide))
         .height(Length::Fill)
         .width(Length::Fill);
