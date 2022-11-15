@@ -11,12 +11,14 @@ pub enum Operator{
 }
 
 impl convert::From<Operator> for u8 {
+    #[inline]
     fn from(op: Operator) -> Self {
         op as u8
     }
 }
 
 impl convert::From<Operator> for char {
+    #[inline]
     fn from(op: Operator) -> Self {
         (op as u8) as char
     }

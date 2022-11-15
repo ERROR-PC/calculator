@@ -25,6 +25,7 @@ pub struct Calculator {
 }
 
 impl Calculator {
+    #[inline]
     pub fn is_num_start(&self) -> bool {
         !self.text.chars().last().unwrap_or('+').is_numeric()
     }
