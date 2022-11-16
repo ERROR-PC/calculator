@@ -1,3 +1,7 @@
+mod structs;
+mod enums;
+mod funcs;
+
 use num_complex::Complex64;
 
 use iced::{Theme, Length, Application, Command};
@@ -7,8 +11,8 @@ use iced::widget::{
     column, row, container, text
 };
 
-use crate::gui_enums::{MathFn, Operator};
-use crate::gui_funcs::{num_container, basic_ops};
+use crate::gui::enums::{MathFn, Operator};
+use crate::gui::funcs::{num_container, basic_ops};
 
 #[derive(Debug, Clone)]
 #[allow(dead_code)]

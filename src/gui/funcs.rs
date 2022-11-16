@@ -3,7 +3,7 @@ use iced::widget::{
 };
 use iced::Length;
 
-use crate::gui_enums::Operator;
+use crate::gui::enums::Operator;
 use crate::gui::Pressed;
 
 const PAD: u16 = 10;
