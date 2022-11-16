@@ -73,8 +73,8 @@ impl Application for Calculator {
                             self.update(Pressed::Op(operator));
                         }
                     },
-                    Event::ModifiersChanged(_modifier) => {}, // idk if I will use this
-                    _ => {},
+                    Event::ModifiersChanged(_modifiers) => {}, // idk if I will use this
+                    event => eprintln!("Error ignored: some weird keyboard event was sent\nLine {}, file {}\nEvent is\n{:?}", line!(), file!(), event),
                 }
             },
             _ => {
@@ -119,12 +119,15 @@ impl Application for Calculator {
     }
 
     fn subscription(&self) -> iced::Subscription<Self::Message> {
-        use iced::keyboard::Event::CharacterReceived;
+        use iced::keyboard::Event::{CharacterReceived, ModifiersChanged};
         use iced::subscription::events_with;
 
         events_with(|event, _status|
             if let iced::Event::Keyboard(CharacterReceived(ch)) = event {
                 Some(Pressed::Keyboard(CharacterReceived(ch)))
+            }
+            else if let iced::Event::Keyboard(ModifiersChanged(modifiers)) = event {
+                Some(Pressed::Keyboard(ModifiersChanged(modifiers)))
             }
             else { None }
         )
