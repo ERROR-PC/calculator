@@ -1,5 +1,5 @@
 mod gui;
-mod button_enums;
+mod gui_enums;
 mod gui_funcs;
 mod errors;
 

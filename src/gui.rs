@@ -7,7 +7,7 @@ use iced::widget::{
     column, row, container, text
 };
 
-use crate::button_enums::{MathFn, Operator};
+use crate::gui_enums::{MathFn, Operator};
 use crate::gui_funcs::{num_container, basic_ops};
 
 #[derive(Debug, Clone)]
