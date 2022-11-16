@@ -33,7 +33,7 @@ impl convert::TryFrom<char> for Operator {
             '-' => Ok(Operator::Minus),
             '*' | 'x' | '×' | '⋅' => Ok(Operator::Mul),
             '/' | '÷' => Ok(Operator::Divide),
-            '=' => Ok(Operator::Equal),
+            '=' | '\r' | '\n' => Ok(Operator::Equal),
             _ => Err(Self::Error { ch }),
         }
     }

@@ -8,7 +8,7 @@ use iced::widget::{
 };
 
 use crate::button_enums::{MathFn, Operator};
-use crate::button_funcs::{num_container, basic_ops};
+use crate::gui_funcs::{num_container, basic_ops};
 
 #[derive(Debug, Clone)]
 #[allow(dead_code)]

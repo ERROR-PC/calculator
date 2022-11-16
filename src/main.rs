@@ -1,6 +1,6 @@
 mod gui;
 mod button_enums;
-mod button_funcs;
+mod gui_funcs;
 mod errors;
 
 use iced::{Application, Settings, window};
