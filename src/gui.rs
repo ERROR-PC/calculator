@@ -1,4 +1,3 @@
-mod parser;
 mod enums;
 mod funcs;
 
@@ -63,6 +62,7 @@ impl Application for Calculator {
                 if self.is_num_start() {
                     return Command::none();
                 }
+
                 self.text.push(op.into());
             },
             Pressed::Keyboard(event) => {

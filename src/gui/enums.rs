@@ -10,6 +10,18 @@ pub enum Operator{
     Equal = b'=',
 }
 
+impl Operator {
+    pub fn precedence(self) -> u32 {
+        match self {
+            Operator::Plus => 2,
+            Operator::Minus => 2,
+            Operator::Mul => 3,
+            Operator::Divide => 3,
+            Operator::Equal => unimplemented!(),
+        }
+    }
+}
+
 impl convert::From<Operator> for u8 {
     #[inline]
     fn from(op: Operator) -> Self {
