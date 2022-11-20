@@ -1,6 +1,6 @@
 use std::convert;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 #[repr(u8)]
 pub enum Operator{
     Plus = b'+',
@@ -39,7 +39,7 @@ impl convert::TryFrom<char> for Operator {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 #[allow(dead_code)]
 pub enum MathFn {
     Sin,

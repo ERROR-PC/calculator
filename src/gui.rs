@@ -1,4 +1,4 @@
-mod structs;
+mod parser;
 mod enums;
 mod funcs;
 
