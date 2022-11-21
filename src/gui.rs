@@ -1,59 +1,38 @@
 mod enums;
 mod funcs;
+mod structs;
 
 use num_complex::Complex64;
-use std::convert;
 
 use iced::{Theme, Length, Application, Command};
 use iced::alignment::{Horizontal, Vertical};
-
 use iced::widget::{
     column, row, container, text
 };
 
-use crate::gui::enums::{MathFn, Operator};
-use crate::gui::funcs::{num_container, basic_ops};
-
-#[derive(Debug, Clone)]
-#[allow(dead_code)]
-pub enum Pressed {
-    Num(u8),
-    Op(Operator),
-    Const(Complex64),
-    Func(MathFn),
-    Keyboard(iced::keyboard::Event),
-}
-
-impl convert::TryFrom<char> for Pressed {
-    type Error = crate::errors::ExprParseError;
-
-    fn try_from(ch: char) -> Result<Self, Self::Error> {
-        use std::f64::consts::{PI, E};
-
-        if let Ok(op) = Operator::try_from(ch) {
-            return Ok(Pressed::Op(op));
-        }
-        match ch.to_ascii_lowercase() {
-            '0'..='9' => Ok(Pressed::Num(ch as u8 - crate::ASCII_OF_0)),
-            'i' => Ok(Pressed::Const(Complex64::i())),
-            'j' => Ok(Pressed::Const(Complex64::i())),
-            'p' | 'π' | 'Π' | 'ϖ' => Ok(Pressed::Const(PI.into())),
-            'e' => Ok(Pressed::Const(E.into())),
-            _ => Err(Self::Error { ch }),
-        }
-    }
-}
+use crate::gui::{
+    funcs::{num_container, basic_ops},
+    enums::Pressed,
+    structs::Token,
+};
 
 #[derive(Debug, Clone, Default)]
 pub struct Calculator {
-    text: String,
-    val: Complex64,
+    tokens: Vec<Token>,
 }
 
 impl Calculator {
     #[inline]
     pub fn is_num_start(&self) -> bool {
-        !self.text.chars().last().unwrap_or('+').is_numeric()
+        !self.to_string().chars().last().unwrap_or('+').is_numeric()
+    }
+}
+
+impl std::fmt::Display for Calculator {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.tokens.iter()
+            .for_each(|token| { write!(f, "{}", token); });
+        Ok(())
     }
 }
 
