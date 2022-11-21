@@ -30,7 +30,7 @@ impl convert::TryFrom<char> for Pressed {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd)]
 #[repr(u8)]
 pub enum Operator{
     Plus = b'+',
@@ -62,7 +62,7 @@ impl convert::From<Operator> for u8 {
 impl convert::From<Operator> for char {
     #[inline]
     fn from(op: Operator) -> Self {
-        (op as u8) as char
+        u8::from(op) as char
     }
 }
 
@@ -82,12 +82,14 @@ impl convert::TryFrom<char> for Operator {
 }
 
 impl std::fmt::Display for Operator {
+    #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self)
+        let ch: char = (*self).into();
+        write!(f, "{}", ch)
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd)]
 #[allow(dead_code)]
 pub enum MathFn {
     Sin,

@@ -30,8 +30,9 @@ impl Calculator {
 
 impl std::fmt::Display for Calculator {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.tokens.iter()
-            .for_each(|token| { write!(f, "{}", token); });
+        for token in &self.tokens {
+            write!(f, "{}", token)?;
+        }
         Ok(())
     }
 }
@@ -57,17 +58,17 @@ impl Application for Calculator {
                 if self.is_num_start() && num == 0 {
                     return Command::none();
                 }
-                self.text.push((num + ASCII_OF_0) as char)
-            },
+                self.tokens.push(Token::Num((num as f64).into()))
+        },
             Pressed::Op(op) => {
                 if self.is_num_start() {
                     return Command::none();
                 }
 
-                self.text.push(op.into());
+                self.tokens.push(Token::Op(op));
             },
-            Pressed::Const(num) => {
-
+            Pressed::Const(_num) => {
+                /* todo! */
             },
             Pressed::Keyboard(event) => {
                 use iced::keyboard::Event;
@@ -98,7 +99,7 @@ impl Application for Calculator {
 
     fn view(&self) -> iced::Element<'_, Self::Message> {
         const PAD: u16 = 10;
-        let display = text(&self.text)
+        let display = text(&self.to_string())
             .height(Length::Fill)
             .width(Length::Fill)
             .horizontal_alignment(Horizontal::Left)
