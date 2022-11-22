@@ -6,18 +6,16 @@ use std::str::FromStr;
 
 use num_complex::Complex64;
 
-use iced::{Theme, Length, Application, Command};
 use iced::alignment::{Horizontal, Vertical};
-use iced::widget::{
-    column, row, container, text
-};
+use iced::widget::{column, container, row, text};
+use iced::{Application, Command, Length, Theme};
 
-use crate::gui::{
-    funcs::{num_container, basic_ops},
-    enums::{Pressed, Operator},
+use crate::constants::*;
+use self::{
+    enums::{Operator, Pressed},
+    funcs::{basic_ops, num_container},
     structs::Token,
 };
-use crate::constants::*;
 
 /// This is the entire calculator, implements Application
 #[derive(Debug, Clone, Default)]
@@ -34,7 +32,7 @@ impl Calculator {
 
     /// Evaluates the tokens into a complex number
     pub fn eval(&mut self) {
-        
+        /* todo! */
     }
 }
 
@@ -70,16 +68,20 @@ impl Application for Calculator {
                 }
                 else if !self.is_num_start() {
                     let mut temp = String::new();
-                    let last_token = self.tokens.last_mut().expect("There *should* be a number before this one");
+                    let last_token = self
+                        .tokens
+                        .last_mut()
+                        .expect("There *should* be a number before this one");
+
                     temp.push_str(&last_token.to_string());
                     temp.push((num + ASCII_OF_0) as char);
                     *last_token = Token::from_str(&temp)
-                            .expect("Logical error: Num variant does not contain a num");
-                }
-                else {
+                        .expect("Logical error: Num variant does not contain a num");
+                } else {
                     self.tokens.push(Token::Num((num as f64).into()))
                 }
-        },
+            }
+
             Pressed::Op(op) => {
                 if self.is_num_start() {
                     return Command::none();
@@ -90,10 +92,10 @@ impl Application for Calculator {
                     return Command::none();
                 }
                 self.tokens.push(Token::Op(op));
-            },
-            Pressed::Const(_num) => {
-                /* todo! */
-            },
+            }
+
+            Pressed::Const(_num) => { /* todo! */ }
+
             Pressed::Keyboard(event) => {
                 use iced::keyboard::Event;
 
@@ -112,10 +114,11 @@ impl Application for Calculator {
                     Event::ModifiersChanged(_modifiers) => {}, // idk if I will use this
                     event => eprintln!("Error ignored: some weird keyboard event was sent\nLine {}, file {}\nEvent is\n{:?}", line!(), file!(), event),
                 }
-            },
+            }
+
             _ => {
                 todo!()
-            },
+            }
         }
 
         Command::none()
@@ -156,17 +159,17 @@ impl Application for Calculator {
 
     fn subscription(&self) -> iced::Subscription<Self::Message> {
         use iced::keyboard::Event::{CharacterReceived, ModifiersChanged};
-        use iced::Event::Keyboard;
         use iced::subscription::events_with;
+        use iced::Event::Keyboard;
 
-        events_with(|event, _status|
+        events_with(|event, _status| {
             if let Keyboard(CharacterReceived(ch)) = event {
                 Some(Pressed::Keyboard(CharacterReceived(ch)))
-            }
-            else if let Keyboard(ModifiersChanged(modifiers)) = event {
+            } else if let Keyboard(ModifiersChanged(modifiers)) = event {
                 Some(Pressed::Keyboard(ModifiersChanged(modifiers)))
+            } else {
+                None
             }
-            else { None }
-        )
+        })
     }
 }

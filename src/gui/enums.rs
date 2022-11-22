@@ -22,7 +22,7 @@ impl std::fmt::Display for Pressed {
     }
 }
 
-/// Interpret a character as a Pressed enum
+/// Interpret charachter a user has pressed into Pressed enum
 impl convert::TryFrom<char> for Pressed {
     type Error = crate::errors::ExprParseError;
 
