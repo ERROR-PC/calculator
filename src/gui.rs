@@ -12,22 +12,31 @@ use iced::widget::{
 
 use crate::gui::{
     funcs::{num_container, basic_ops},
-    enums::Pressed,
+    enums::{Pressed, Operator},
     structs::Token,
 };
+use crate::constants::*;
 
+/// This is the entire calculator, implements Application
 #[derive(Debug, Clone, Default)]
 pub struct Calculator {
     tokens: Vec<Token>,
 }
 
 impl Calculator {
+    /// Checks wether this is the beginning of a new number
     #[inline]
     pub fn is_num_start(&self) -> bool {
-        !self.to_string().chars().last().unwrap_or('+').is_numeric()
+        !matches!(self.tokens.last(), Some(Token::Num(_)))
+    }
+
+    /// Evaluates the tokens into a complex number
+    pub fn eval(&mut self) {
+
     }
 }
 
+/// The text display widget's text is implemented here
 impl std::fmt::Display for Calculator {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for token in &self.tokens {
@@ -43,7 +52,7 @@ impl Application for Calculator {
     type Theme = Theme;
     type Flags = ();
 
-    fn new(_flags: Self::Flags) -> (Self, iced::Command<Self::Message>) {
+    fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
         (Self::default(), Command::none())
     }
 
@@ -52,7 +61,6 @@ impl Application for Calculator {
     }
 
     fn update(&mut self, message: Self::Message) -> Command<Pressed> {
-        const ASCII_OF_0: u8 = 48;
         match message {
             Pressed::Num(num) => {
                 if self.is_num_start() && num == 0 {
@@ -65,6 +73,10 @@ impl Application for Calculator {
                     return Command::none();
                 }
 
+                if op == Operator::Equal {
+                    self.eval();
+                    return Command::none();
+                }
                 self.tokens.push(Token::Op(op));
             },
             Pressed::Const(_num) => {

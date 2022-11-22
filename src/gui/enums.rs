@@ -1,6 +1,7 @@
-use std::convert;
 use num_complex::Complex64;
+use std::convert;
 
+/// Enum representing the allowed user input
 #[derive(Debug, Clone)]
 #[allow(dead_code)]
 pub enum Pressed {
@@ -11,11 +12,12 @@ pub enum Pressed {
     Keyboard(iced::keyboard::Event),
 }
 
+/// Interpret a character as a Pressed enum
 impl convert::TryFrom<char> for Pressed {
     type Error = crate::errors::ExprParseError;
 
     fn try_from(ch: char) -> Result<Self, Self::Error> {
-        use std::f64::consts::{PI, E};
+        use std::f64::consts::{E, PI};
 
         if let Ok(op) = Operator::try_from(ch) {
             return Ok(Pressed::Op(op));
@@ -30,12 +32,16 @@ impl convert::TryFrom<char> for Pressed {
     }
 }
 
+/// All allowed operators in the calculator
+///
+/// This is going to be expanded as the calculator
+/// gets bigger and bigger
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd)]
 #[repr(u8)]
-pub enum Operator{
+pub enum Operator {
     Plus = b'+',
     Minus = b'-',
-    Mul = b'\xD7', // × symbol for mul
+    Mul = b'\xD7',    // × symbol for mul
     Divide = b'\xF7', // ÷ symbol for division
     Equal = b'=',
 }
@@ -52,6 +58,7 @@ impl Operator {
     }
 }
 
+/// Converts an operator into bytecode of character display
 impl convert::From<Operator> for u8 {
     #[inline]
     fn from(op: Operator) -> Self {
@@ -59,6 +66,7 @@ impl convert::From<Operator> for u8 {
     }
 }
 
+/// Converts an operator into a character
 impl convert::From<Operator> for char {
     #[inline]
     fn from(op: Operator) -> Self {
@@ -66,6 +74,7 @@ impl convert::From<Operator> for char {
     }
 }
 
+/// Matches to see which operator is represented by the character if any
 impl convert::TryFrom<char> for Operator {
     type Error = crate::errors::OperatorParseError;
 

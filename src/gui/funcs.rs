@@ -1,6 +1,4 @@
-use iced::widget::{
-    Container, container, row, column, Column, button
-};
+use iced::widget::{button, column, container, row, Column, Container};
 use iced::Length;
 
 use crate::gui::enums::Operator;
@@ -36,10 +34,7 @@ pub fn num_container<'a>() -> Container<'a, Pressed> {
         .on_press(Pressed::Op(Operator::Equal))
         .width(Length::FillPortion(1))
         .height(Length::Fill);
-    let row4 = row![
-        num_btn!(0).width(Length::FillPortion(2)),
-        btn_eq,
-    ]
+    let row4 = row![num_btn!(0).width(Length::FillPortion(2)), btn_eq,]
         .spacing(PAD)
         .width(Length::Fill)
         .height(Length::Fill);

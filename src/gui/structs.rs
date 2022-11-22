@@ -1,5 +1,5 @@
-use num_complex::Complex64;
 use crate::gui::enums::Operator;
+use num_complex::Complex64;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Token {
@@ -13,11 +13,10 @@ impl std::fmt::Display for Token {
             Self::Num(num) => {
                 if num.im == 0.0 {
                     write!(f, "{}", num.re)
-                }
-                else {
+                } else {
                     write!(f, "{}", num)
                 }
-            },
+            }
             Self::Op(op) => write!(f, "{}", op),
         }
     }
