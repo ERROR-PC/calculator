@@ -10,12 +10,12 @@ use iced::alignment::{Horizontal, Vertical};
 use iced::widget::{column, container, row, text};
 use iced::{Application, Command, Length, Theme};
 
-use crate::constants::*;
 use self::{
     enums::{Operator, Pressed},
     funcs::{basic_ops, num_container},
     structs::Token,
 };
+use crate::constants::*;
 
 /// This is the entire calculator, implements Application
 #[derive(Debug, Clone, Default)]
@@ -32,6 +32,31 @@ impl Calculator {
 
     /// Evaluates the tokens into a complex number
     pub fn eval(&mut self) {
+        let op_iter = self
+            .tokens
+            .iter()
+            .filter_map(|token| {
+                match token {
+                    Token::Op(op) => Some(*op),
+                    _ => None,
+                }
+            });
+
+        // find operator with max precedence
+        let Some(max_op) = op_iter.max_by(
+            |op1, op2| {
+                op1.precedence().cmp(&op2.precedence())
+            })
+        // Iterator is empty, there is nothing
+        // to evaluate
+        else {
+            return;
+        };
+
+        // starts as max precedence
+        // then it is decremented
+        let curr_precedence = max_op.precedence();
+
         /* todo! */
     }
 }
@@ -65,8 +90,7 @@ impl Application for Calculator {
             Pressed::Num(num) => {
                 if self.is_num_start() && num == 0 {
                     return Command::none();
-                }
-                else if !self.is_num_start() {
+                } else if !self.is_num_start() {
                     let mut temp = String::new();
                     let last_token = self
                         .tokens
@@ -78,6 +102,7 @@ impl Application for Calculator {
                     *last_token = Token::from_str(&temp)
                         .expect("Logical error: Num variant does not contain a num");
                 } else {
+                    // new number is being written
                     self.tokens.push(Token::Num((num as f64).into()))
                 }
             }
