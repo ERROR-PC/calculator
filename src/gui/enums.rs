@@ -2,7 +2,7 @@ use num_complex::Complex64;
 use std::convert;
 
 /// Enum representing the allowed user input
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(dead_code)]
 pub enum Pressed {
     Num(u8),
@@ -10,6 +10,16 @@ pub enum Pressed {
     Const(Complex64),
     Func(MathFn),
     Keyboard(iced::keyboard::Event),
+}
+
+/// This trait really shouldn't be implemented but it is required for errors
+/// 
+/// This is why Display is just the same as Debug
+impl std::fmt::Display for Pressed {
+    #[inline]
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Debug::fmt(self, f)
+    }
 }
 
 /// Interpret a character as a Pressed enum

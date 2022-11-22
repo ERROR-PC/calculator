@@ -2,6 +2,8 @@ mod enums;
 mod funcs;
 mod structs;
 
+use std::str::FromStr;
+
 use num_complex::Complex64;
 
 use iced::{Theme, Length, Application, Command};
@@ -32,7 +34,7 @@ impl Calculator {
 
     /// Evaluates the tokens into a complex number
     pub fn eval(&mut self) {
-
+        
     }
 }
 
@@ -66,7 +68,17 @@ impl Application for Calculator {
                 if self.is_num_start() && num == 0 {
                     return Command::none();
                 }
-                self.tokens.push(Token::Num((num as f64).into()))
+                else if !self.is_num_start() {
+                    let mut temp = String::new();
+                    let last_token = self.tokens.last_mut().expect("There *should* be a number before this one");
+                    temp.push_str(&last_token.to_string());
+                    temp.push((num + ASCII_OF_0) as char);
+                    *last_token = Token::from_str(&temp)
+                            .expect("Logical error: Num variant does not contain a num");
+                }
+                else {
+                    self.tokens.push(Token::Num((num as f64).into()))
+                }
         },
             Pressed::Op(op) => {
                 if self.is_num_start() {
