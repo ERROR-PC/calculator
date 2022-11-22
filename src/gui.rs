@@ -132,13 +132,14 @@ impl Application for Calculator {
 
     fn subscription(&self) -> iced::Subscription<Self::Message> {
         use iced::keyboard::Event::{CharacterReceived, ModifiersChanged};
+        use iced::Event::Keyboard;
         use iced::subscription::events_with;
 
         events_with(|event, _status|
-            if let iced::Event::Keyboard(CharacterReceived(ch)) = event {
+            if let Keyboard(CharacterReceived(ch)) = event {
                 Some(Pressed::Keyboard(CharacterReceived(ch)))
             }
-            else if let iced::Event::Keyboard(ModifiersChanged(modifiers)) = event {
+            else if let Keyboard(ModifiersChanged(modifiers)) = event {
                 Some(Pressed::Keyboard(ModifiersChanged(modifiers)))
             }
             else { None }
