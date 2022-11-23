@@ -11,12 +11,34 @@ pub enum Token {
     Op(Operator),
 }
 
+impl Token {
+    /// If it is a Num variant, the complex number is returned
+    ///
+    /// # Panics
+    /// Will panic if it is an op variant
+    pub fn unwrap_complex(self) -> Complex64 {
+        if let Token::Num(n) = self { n }
+        else { panic!("Cannot unwrap an op variant into a number") }
+    }
+
+    /// If it is an Op variant, the operator is returned
+    ///
+    /// # Panics
+    /// Will panic if it is a num variant
+    pub fn unwrap_op(self) -> Operator {
+        if let Token::Op(op) = self { op }
+        else { panic!("Cannot unwrap an op variant into a number") }
+    }
+}
+
 impl std::fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Num(num) => {
                 if num.im == 0.0 {
                     write!(f, "{}", num.re)
+                } else if num.re == 0.0 {
+                    write!(f, "{}i", num.im)
                 } else {
                     write!(f, "{}", num)
                 }
@@ -59,5 +81,19 @@ impl convert::TryFrom<Pressed> for Token {
             Pressed::Const(num) => Ok(Token::Num(num)),
             _ => Err(Self::Error { cause: value }),
         }
+    }
+}
+
+impl convert::From<Complex64> for Token {
+    #[inline]
+    fn from(num: Complex64) -> Self {
+        Token::Num(num)
+    }
+}
+
+impl convert::From<Operator> for Token {
+    #[inline]
+    fn from(op: Operator) -> Self {
+        Token::Op(op)
     }
 }

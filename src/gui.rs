@@ -1,6 +1,6 @@
 mod enums;
 mod funcs;
-mod structs;
+mod token;
 
 use std::str::FromStr;
 
@@ -13,7 +13,7 @@ use iced::{Application, Command, Length, Theme};
 use self::{
     enums::{Operator, Pressed},
     funcs::{basic_ops, num_container},
-    structs::Token,
+    token::Token,
 };
 use crate::constants::*;
 
@@ -30,34 +30,32 @@ impl Calculator {
         !matches!(self.tokens.last(), Some(Token::Num(_)))
     }
 
-    /// Evaluates the tokens into a complex number
+    /// Evaluates the tokens into a single
+    /// complex64 token
     pub fn eval(&mut self) {
-        let op_iter = self
-            .tokens
-            .iter()
-            .filter_map(|token| {
-                match token {
-                    Token::Op(op) => Some(*op),
-                    _ => None,
-                }
-            });
-
-        // find operator with max precedence
-        let Some(max_op) = op_iter.max_by(
-            |op1, op2| {
-                op1.precedence().cmp(&op2.precedence())
-            })
-        // Iterator is empty, there is nothing
-        // to evaluate
-        else {
-            return;
-        };
-
         // starts as max precedence
         // then it is decremented
-        let curr_precedence = max_op.precedence();
+        for curr_op in Operator::ALL_OPS {
+            while let Some(i) = self
+                .tokens
+                .clone()
+                .iter()
+                .position(|tk| *tk == Token::Op(curr_op)) {
 
-        /* todo! */
+                #[cfg(debug_assertions)]
+                println!("{}", self.to_string());
+                let num1 = self.tokens.remove(i - 1).unwrap_complex();
+                let op = self.tokens.remove(i - 1).unwrap_op();
+                let num2 = self.tokens[i - 1].unwrap_complex();
+
+                self.tokens[i - 1] = match op {
+                    Operator::Plus => Token::Num(num1 + num2),
+                    Operator::Minus => Token::Num(num1 - num2),
+                    Operator::Mul => Token::Num(num1 * num2),
+                    Operator::Divide => Token::Num(num1 / num2),
+                };
+            }
+        }
     }
 }
 
@@ -111,12 +109,14 @@ impl Application for Calculator {
                 if self.is_num_start() {
                     return Command::none();
                 }
+                self.tokens.push(Token::Op(op));
+            }
 
-                if op == Operator::Equal {
-                    self.eval();
+            Pressed::Equal => {
+                if self.is_num_start() {
                     return Command::none();
                 }
-                self.tokens.push(Token::Op(op));
+                self.eval();
             }
 
             Pressed::Const(_num) => { /* todo! */ }
@@ -129,11 +129,11 @@ impl Application for Calculator {
                         if ch.is_numeric() {
                             self.update(Pressed::Num(ch as u8 - ASCII_OF_0));
                         }
-                        else if ch == 'i' {
+                        else if ch == 'i' || ch == 'j' {
                             self.update(Pressed::Const(Complex64::i()));
                         }
-                        else if let Ok(operator) = ch.try_into() {
-                            self.update(Pressed::Op(operator));
+                        else if let Ok(press) = ch.try_into() {
+                            self.update(press);
                         }
                     },
                     Event::ModifiersChanged(_modifiers) => {}, // idk if I will use this

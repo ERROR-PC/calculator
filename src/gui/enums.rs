@@ -7,6 +7,7 @@ use std::convert;
 pub enum Pressed {
     Num(u8),
     Op(Operator),
+    Equal,
     Const(Complex64),
     Func(MathFn),
     Keyboard(iced::keyboard::Event),
@@ -34,6 +35,7 @@ impl convert::TryFrom<char> for Pressed {
         }
         match ch.to_ascii_lowercase() {
             '0'..='9' => Ok(Pressed::Num(ch as u8 - crate::ASCII_OF_0)),
+            '=' | '\r' | '\n' => Ok(Pressed::Equal),
             'i' | 'j' => Ok(Pressed::Const(Complex64::i())),
             'p' | 'π' | 'Π' | 'ϖ' => Ok(Pressed::Const(PI.into())),
             'e' => Ok(Pressed::Const(E.into())),
@@ -53,19 +55,24 @@ pub enum Operator {
     Minus = b'-',
     Mul = b'\xD7',    // × symbol for mul
     Divide = b'\xF7', // ÷ symbol for division
-    Equal = b'=',
 }
 
 impl Operator {
     pub fn precedence(self) -> u32 {
         match self {
-            Operator::Plus => 2,
+            Operator::Plus => 3,
             Operator::Minus => 2,
-            Operator::Mul => 3,
-            Operator::Divide => 3,
-            Operator::Equal => 0,
+            Operator::Mul => 5,
+            Operator::Divide => 4,
         }
     }
+
+    pub const ALL_OPS: [Operator; 4] = [
+        Operator::Mul,
+        Operator::Divide,
+        Operator::Plus,
+        Operator::Minus,
+    ];
 }
 
 /// Converts an operator into bytecode of character display
@@ -94,7 +101,6 @@ impl convert::TryFrom<char> for Operator {
             '-' => Ok(Operator::Minus),
             '*' | 'x' | '×' | '⋅' => Ok(Operator::Mul),
             '/' | '÷' | '\\' => Ok(Operator::Divide),
-            '=' | '\r' | '\n' => Ok(Operator::Equal),
             _ => Err(Self::Error { ch }),
         }
     }

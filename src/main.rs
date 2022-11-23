@@ -8,7 +8,7 @@ use iced::{window, Application, Settings};
 
 fn main() -> iced::Result {
     Calculator::run(Settings {
-        // change the default size to be small
+        // change the default size to be smaller
         window: window::Settings { size: (240, 320), ..Default::default() },
         text_multithreading: true,
         antialiasing: false,

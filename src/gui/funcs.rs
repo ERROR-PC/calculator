@@ -31,7 +31,7 @@ pub fn num_container<'a>() -> Container<'a, Pressed> {
         .height(Length::Fill);
 
     let btn_eq = button("=")
-        .on_press(Pressed::Op(Operator::Equal))
+        .on_press(Pressed::Equal)
         .width(Length::FillPortion(1))
         .height(Length::Fill);
     let row4 = row![num_btn!(0).width(Length::FillPortion(2)), btn_eq,]
